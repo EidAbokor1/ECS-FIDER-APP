@@ -1,0 +1,16 @@
+fider/*.md
+fider/node_modules/
+fider/.env*
+fider/.git/
+fider/dist/
+fider/e2e/
+fider/.github/
+fider/Dockerfile
+fider/docker-compose*.yml
+fider/*.log
+fider/logs/
+fider/.vscode/
+fider/*.swp
+fider/.DS_Store
+fider/.cache/
+docker-compose.yml

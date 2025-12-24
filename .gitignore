@@ -1,0 +1,14 @@
+.env
+.env.*
+*.env
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+postgres-data/
+*.log
+logs/
+fider/node_modules/
+fider/dist/
+fider/.cache/
