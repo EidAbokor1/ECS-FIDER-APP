@@ -56,4 +56,4 @@ EXPOSE 3000
 
 HEALTHCHECK --timeout=5s CMD ./fider ping
 
-CMD ./fider migrate && ./fider
+CMD ["/bin/sh", "c", "./fider migrate && ./fider"]
