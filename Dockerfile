@@ -15,7 +15,6 @@ COPY fider/ ./
 
 RUN make build-server
 
-
 FROM node:22-bookworm AS ui-builder
 
 WORKDIR /app
@@ -56,4 +55,4 @@ EXPOSE 3000
 
 HEALTHCHECK --timeout=5s CMD ./fider ping
 
-CMD ["/bin/sh", "c", "./fider migrate && ./fider"]
+CMD ./fider migrate && ./fider
