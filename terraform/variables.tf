@@ -46,12 +46,6 @@ variable "domain_name" {
   default     = "project-hub.click"
 }
 
-variable "subdomain" {
-  description = "Subdomain for the application"
-  type        = string
-  default     = "tm"
-}
-
 variable "db_name" {
   description = "Database name"
   type        = string

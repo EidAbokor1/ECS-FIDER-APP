@@ -1,29 +1,34 @@
 output "vpc_id" {
   description = "VPC ID"
-  value       = aws_vpc.main.id
+  value       = module.networking.vpc_id
 }
 
 output "alb_dns_name" {
   description = "ALB DNS name"
-  value       = aws_lb.main.dns_name
+  value       = module.load_balancer.alb_dns_name
 }
 
 output "application_url" {
   description = "Application URL"
-  value       = "https://${var.subdomain}.${var.domain_name}"
+  value       = "https://${var.domain_name}"
 }
 
 output "rds_endpoint" {
   description = "RDS endpoint"
-  value       = aws_db_instance.main.endpoint
+  value       = module.database.db_endpoint
 }
 
 output "route53_nameservers" {
   description = "Route 53 nameservers - update these in your domain registrar"
-  value       = aws_route53_zone.main.name_servers
+  value       = module.dns.hosted_zone_name_servers
 }
 
 output "ecs_cluster_name" {
-  description = "ECS Cluster name"
-  value       = aws_ecs_cluster.main.name
+  description = "ECS cluster name"
+  value       = module.ecs.cluster_name
+}
+
+output "certificate_arn" {
+  description = "ACM certificate ARN"
+  value       = module.dns.certificate_arn
 }
