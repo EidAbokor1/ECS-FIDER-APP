@@ -32,3 +32,13 @@ output "certificate_arn" {
   description = "ACM certificate ARN"
   value       = module.dns.certificate_arn
 }
+output "github_actions_role_arn" {
+  description = "iam role arn for github actions oidc"
+  value       = aws_iam_role.github_actions.arn
+
+}
+
+output "ecr_repository_url" {
+  description = "ECR repository URL"
+  value       = module.ecr.repository_url
+}
