@@ -1,0 +1,59 @@
+name: Post-Deploy Health Check
+
+on:
+  workflow_run:
+    workflows: ["Terraform Deploy", "Docker Build and Push"]
+    types:
+      - completed
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  APP_URL: https://project-hub.click
+  MAX_RETRIES: 10
+  RETRY_DELAY: 30
+
+jobs:
+  health-check:
+    name: Health Check
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    
+    steps:
+      - name: Wait for ECS tasks to stabilize
+        run: sleep 120
+      
+      - name: Check application health
+        run: |
+          echo "Checking health at: ${{ env.APP_URL }}"
+          
+          for i in $(seq 1 ${{ env.MAX_RETRIES }}); do
+            echo "Attempt $i of ${{ env.MAX_RETRIES }}"
+            
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" ${{ env.APP_URL }})
+            
+            if [ "$HTTP_CODE" -eq 200 ] || [ "$HTTP_CODE" -eq 302 ] || [ "$HTTP_CODE" -eq 307 ]; then
+              echo "Health check passed! HTTP $HTTP_CODE"
+              exit 0
+            else
+              echo "Health check failed. HTTP $HTTP_CODE"
+              
+              if [ $i -lt ${{ env.MAX_RETRIES }} ]; then
+                echo "Retrying in ${{ env.RETRY_DELAY }} seconds..."
+                sleep ${{ env.RETRY_DELAY }}
+              fi
+            fi
+          done
+          
+          echo "Health check failed after ${{ env.MAX_RETRIES }} attempts"
+          exit 1
+      
+      - name: Test specific endpoint (if health endpoint exists)
+        run: |
+          # Try common health check paths
+          curl -f ${{ env.APP_URL }}/ || \
+          curl -f ${{ env.APP_URL }}/health || \
+          curl -f ${{ env.APP_URL }}/_health || \
+          echo "No specific health endpoint found, using root path"
