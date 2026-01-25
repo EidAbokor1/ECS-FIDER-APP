@@ -10,10 +10,10 @@ variable "project_name" {
   default = "fider"
 }
 
-variable "enviroment" {
-  description = "enviroment name: dev , staging, prod"
-  type = string
-  default = "production"
+variable "environment" {
+  description = "The environment name (dev, staging, prod)"
+  type        = string
+  default     = "prod"
 }
 
 variable "vpc_cidr" {

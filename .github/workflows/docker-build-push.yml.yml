@@ -7,7 +7,6 @@ on:
     paths:
       - 'Dockerfile'
       - 'fider/**'
-      - 'app/**'
   workflow_dispatch:
 
 permissions:

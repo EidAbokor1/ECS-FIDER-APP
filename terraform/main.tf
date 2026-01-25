@@ -1,7 +1,20 @@
+locals {
+  environment = terraform.workspace == "default" ? var.environment : terraform.workspace
+
+  name_prefix = "${var.project_name}-${local.environment}"
+
+  common_tags = {
+    Project     = var.project_name
+    Environment = local.environment
+    Workspace   = terraform.workspace
+    ManagedBy   = "Terraform"
+  }
+}
+
 module "networking" {
   source = "./modules/networking"
 
-  project_name         = var.project_name
+  project_name         = local.name_prefix
   vpc_cidr             = var.vpc_cidr
   availability_zones   = var.availability_zones
   public_subnet_cidrs  = var.public_subnet_cidrs
@@ -11,7 +24,7 @@ module "networking" {
 module "security" {
   source = "./modules/security"
 
-  project_name   = var.project_name
+  project_name   = local.name_prefix
   vpc_id         = module.networking.vpc_id
   container_port = var.container_port
 }
@@ -19,13 +32,13 @@ module "security" {
 module "iam" {
   source = "./modules/iam"
 
-  project_name = var.project_name
+  project_name = local.name_prefix
 }
 
 module "database" {
   source = "./modules/database"
 
-  project_name          = var.project_name
+  project_name          = local.name_prefix
   vpc_id                = module.networking.vpc_id
   private_subnet_ids    = module.networking.private_subnet_ids
   rds_security_group_id = module.security.rds_security_group_id
@@ -40,7 +53,7 @@ module "database" {
 module "load_balancer" {
   source = "./modules/load-balancer"
 
-  project_name          = var.project_name
+  project_name          = local.name_prefix
   vpc_id                = module.networking.vpc_id
   public_subnet_ids     = module.networking.public_subnet_ids
   alb_security_group_id = module.security.alb_security_group_id
@@ -51,7 +64,7 @@ module "load_balancer" {
 module "dns" {
   source = "./modules/dns"
 
-  project_name = var.project_name
+  project_name = local.name_prefix
   domain_name  = var.domain_name
   alb_dns_name = module.load_balancer.alb_dns_name
   alb_zone_id  = module.load_balancer.alb_zone_id
@@ -60,7 +73,7 @@ module "dns" {
 module "ses" {
   source = "./modules/ses"
 
-  project_name   = var.project_name
+  project_name   = local.name_prefix
   domain_name    = var.domain_name
   hosted_zone_id = module.dns.hosted_zone_id
   admin_email    = var.admin_email
@@ -69,7 +82,7 @@ module "ses" {
 module "secrets" {
   source = "./modules/secrets"
 
-  project_name  = var.project_name
+  project_name  = local.name_prefix
   db_username   = var.db_username
   db_password   = var.db_password
   db_endpoint   = module.database.db_endpoint
@@ -82,7 +95,7 @@ module "secrets" {
 module "ecs" {
   source = "./modules/ecs"
 
-  project_name             = var.project_name
+  project_name             = local.name_prefix
   aws_region               = var.aws_region
   public_subnet_ids        = module.networking.public_subnet_ids
   ecs_security_group_id    = module.security.ecs_security_group_id
@@ -109,5 +122,5 @@ module "ecs" {
 module "ecr" {
   source = "./modules/ecr"
 
-  project_name = var.project_name
+  project_name = local.name_prefix
 }

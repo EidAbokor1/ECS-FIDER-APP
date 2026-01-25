@@ -50,9 +50,8 @@ jobs:
           echo "Health check failed after ${{ env.MAX_RETRIES }} attempts"
           exit 1
       
-      - name: Test specific endpoint (if health endpoint exists)
+      - name: Test specific endpoints
         run: |
-          # Try common health check paths
           curl -f ${{ env.APP_URL }}/ || \
           curl -f ${{ env.APP_URL }}/health || \
           curl -f ${{ env.APP_URL }}/_health || \
