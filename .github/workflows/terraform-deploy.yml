@@ -46,7 +46,21 @@ jobs:
       - name: Terraform Init
         working-directory: ./terraform
         run: terraform init -input=false
-      
+
+      - name: Select Terraform Workspace
+        working-directory: ./terraform
+        run: |
+            WORKSPACE="prod"
+            if [ "${{ github.ref }}" == "refs/heads/develop" ]; then
+              WORKSPACE="dev"
+            elif [ "${{ github.ref }}" == "refs/heads/staging" ]; then
+              WORKSPACE="staging"
+            elif [ "${{ github.ref }}" == "refs/heads/main" ]; then
+              WORKSPACE="prod"
+            fi
+            echo "Deploying to workspace: $WORKSPACE"
+            terraform workspace select $WORKSPACE || terraform workspace new $WORKSPACE
+
       - name: Terraform Validate
         working-directory: ./terraform
         run: terraform validate

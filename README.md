@@ -2,7 +2,8 @@
 
 Production deployment of Fider feedback platform on AWS using Docker, Terraform, and CI/CD.
 
-**Live Application:** https://project-hub.click
+**Live Application:** [https://project-hub.click](https://demo.fider.io/)
+
 
 ---
 
@@ -106,17 +107,17 @@ This project deploys Fider (an open-source feedback management tool) on AWS with
 
 ### 1. Clone Repository
 
-bash
-git clone 
-https://github.com/EidAbokor1/ECS-FIDER-APP.git: https://github.com/EidAbokor1/ECS-FIDER-APP.git
+```
+git clone https://github.com/EidAbokor1/ECS-FIDER-APP.git
 
 cd ECS-FIDER-APP/terraform
-
+```
 ### 2. Configure Variables
 
-bash
+```
 cp terraform.tfvars.example terraform.tfvars
-nano terraform.tfvars
+vim terraform.tfvars
+```
 
 Required values:
 - `domain_name` - Your domain
@@ -170,13 +171,16 @@ https://your-domain.com
 </video>
 
 ### ECS Service Healthy
-![ECS](./screenshots/ecs-healthy.png)
+![ECS](./images/Screenshot%202026-01-25%20at%2016.03.59.png)
+![ECS](./images/Screenshot%202026-01-25%20at%2016.04.24.png)
 
 ### Target Group Healthy
-![Targets](./screenshots/targets-healthy.png)
+![Targets](./images/Screenshot%202026-01-25%20at%2016.06.45.png)
 
 ### Successful CI/CD Pipeline
-![Pipeline](./screenshots/pipeline-success.png)
+![Pipeline](./images/Screenshot%202026-01-25%20at%2016.16.02.png)
+![Pipeline](./images/Screenshot%202026-01-25%20at%2016.16.42.png)
+![Pipeline](./images/Screenshot%202026-01-25%20at%2016.18.09.png)
 
 ---
 
