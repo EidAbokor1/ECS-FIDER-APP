@@ -53,6 +53,3 @@ jobs:
       - name: Test specific endpoints
         run: |
           curl -f ${{ env.APP_URL }}/ || \
-          curl -f ${{ env.APP_URL }}/health || \
-          curl -f ${{ env.APP_URL }}/_health || \
-          echo "No specific health endpoint found, using root path"
