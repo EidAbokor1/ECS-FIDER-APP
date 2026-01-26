@@ -273,13 +273,13 @@ Confirm by typing `yes`. Takes 10-15 minutes.
 ## Cost Estimate
 
 **Monthly costs:**
-- ECS Fargate: ~$15
-- RDS PostgreSQL: ~$15
-- Application Load Balancer: ~$16
-- NAT Gateway: ~$32
+- ECS Fargate: $15
+- RDS PostgreSQL: $15
+- Application Load Balancer: $16
+- NAT Gateway: $32
 - Route 53: $0.50
-- Data Transfer: ~$5
-- **Total: ~$83/month**
+- Data Transfer: $5
+- **Total: $83/month**
 
 ---
 
