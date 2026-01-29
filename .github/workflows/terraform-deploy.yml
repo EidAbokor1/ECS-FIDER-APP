@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+      - staging
+      - dev
     paths:
       - 'terraform/**'
   workflow_dispatch:
@@ -51,14 +53,24 @@ jobs:
         working-directory: ./terraform
         run: |
             WORKSPACE="prod"
-            if [ "${{ github.ref }}" == "refs/heads/develop" ]; then
+            TFVARS_FILE="terraform.prod.tfvars"
+
+            if [ "${{ github.ref }}" == "refs/heads/dev" ]; then
               WORKSPACE="dev"
+              TFVARS_FILE="terraform.dev.tfvars"
             elif [ "${{ github.ref }}" == "refs/heads/staging" ]; then
               WORKSPACE="staging"
+              TFVARS_FILE="terraform.dev.tfvars"
             elif [ "${{ github.ref }}" == "refs/heads/main" ]; then
               WORKSPACE="prod"
+              TFVARS_FILE="terraform.prod.tfvars"
             fi
+
             echo "Deploying to workspace: $WORKSPACE"
+            echo "Using tfvars file: $TFVARS_FILE"
+            echo "WORKSPACE=$WORKSPACE" >> $GITHUB_ENV
+            echo "TFVARS_FILE=$TFVARS_FILE" >> $GITHUB_ENV
+
             terraform workspace select $WORKSPACE || terraform workspace new $WORKSPACE
 
       - name: Terraform Validate
@@ -73,7 +85,7 @@ jobs:
           TF_VAR_jwt_secret: ${{ secrets.TF_VAR_jwt_secret }}
           TF_VAR_smtp_username: ${{ secrets.TF_VAR_smtp_username }}
           TF_VAR_smtp_password: ${{ secrets.TF_VAR_smtp_password }}
-        run: terraform plan -no-color -input=false
+        run: terraform plan -var-file="${{ env.TFVARS_FILE }}" -no-color -input=false
       
       - name: Terraform Apply
         working-directory: ./terraform
@@ -83,7 +95,7 @@ jobs:
           TF_VAR_jwt_secret: ${{ secrets.TF_VAR_jwt_secret }}
           TF_VAR_smtp_username: ${{ secrets.TF_VAR_smtp_username }}
           TF_VAR_smtp_password: ${{ secrets.TF_VAR_smtp_password }}
-        run: terraform apply -auto-approve -input=false
+        run: terraform apply -var-file="${{ env.TFVARS_FILE }}" -auto-approve -input=false
       
       - name: Output infrastructure details
         working-directory: ./terraform
