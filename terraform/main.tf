@@ -97,7 +97,7 @@ module "ecs" {
 
   project_name             = local.name_prefix
   aws_region               = var.aws_region
-  public_subnet_ids        = module.networking.public_subnet_ids
+  private_subnet_ids       = module.networking.private_subnet_ids
   ecs_security_group_id    = module.security.ecs_security_group_id
   target_group_arn         = module.load_balancer.target_group_arn
   task_execution_role_arn  = module.iam.ecs_task_execution_role_arn
