@@ -50,3 +50,4 @@ resource "aws_iam_role_policy_attachment" "github_actions_admin" {
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 
 }
+
