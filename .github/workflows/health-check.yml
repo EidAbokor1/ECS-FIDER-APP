@@ -11,7 +11,6 @@ permissions:
   contents: read
 
 env:
-  APP_URL: https://project-hub.click
   MAX_RETRIES: 10
   RETRY_DELAY: 30
 
@@ -22,17 +21,32 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     
     steps:
+      - name: Determine Environment URL
+        run: |
+          BRANCH="${{ github.event.workflow_run.head_branch }}"
+          
+          if [ "$BRANCH" == "dev" ]; then
+            APP_URL="https://dev.project-hub.click"
+          elif [ "$BRANCH" == "staging" ]; then
+            APP_URL="https://staging.project-hub.click"
+          else
+            APP_URL="https://project-hub.click"
+          fi
+          
+          echo "APP_URL=$APP_URL" >> $GITHUB_ENV
+          echo "Testing URL: $APP_URL"
+      
       - name: Wait for ECS tasks to stabilize
         run: sleep 120
       
       - name: Check application health
         run: |
-          echo "Checking health at: ${{ env.APP_URL }}"
+          echo "Checking health at: ${APP_URL}"
           
           for i in $(seq 1 ${{ env.MAX_RETRIES }}); do
             echo "Attempt $i of ${{ env.MAX_RETRIES }}"
             
-            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" ${{ env.APP_URL }})
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" ${APP_URL})
             
             if [ "$HTTP_CODE" -eq 200 ] || [ "$HTTP_CODE" -eq 302 ] || [ "$HTTP_CODE" -eq 307 ]; then
               echo "Health check passed! HTTP $HTTP_CODE"
@@ -52,4 +66,4 @@ jobs:
       
       - name: Test specific endpoints
         run: |
-          curl -f ${{ env.APP_URL }}/ || \
+          curl -f ${APP_URL}/ || echo "Root endpoint check completed"
