@@ -1,0 +1,50 @@
+# ECS Fider Deployment Configuration
+# Copy this file to terraform.tfvars and update values
+#
+#   SECURITY WARNING:
+# - NEVER commit terraform.tfvars with real secrets to version control
+# - Ensure terraform.tfvars is listed in .gitignore
+# - For production, consider using AWS Secrets Manager or environment variables
+
+# Project Configuration
+project_name = "fider"
+environment  = "production"
+aws_region   = "eu-west-2"
+
+# Domain Configuration
+domain_name = "your-domain.com"
+admin_email = "admin@your-domain.com"
+
+# Database Configuration
+db_name           = "fider"
+db_username       = "fider"
+db_password       = "<generate-strong-password-min-16-chars>"  # Use: openssl rand -base64 24
+db_instance_class = "db.t3.micro"
+db_allocated_storage = 20
+db_engine_version = "17.6"
+
+# Security Configuration
+# CRITICAL: JWT secret must be unique, never committed, and rotated regularly
+jwt_secret = "<generate-with-openssl-rand-base64-48>"  # Run: openssl rand -base64 48
+
+# Email Configuration (SES SMTP)
+# Recommended: Store credentials in AWS Secrets Manager for production
+smtp_username    = "<your-ses-smtp-username>"
+smtp_password    = "<your-ses-smtp-password>"
+email_noreply    = "noreply@your-domain.com"
+smtp_host        = "email-smtp.eu-west-2.amazonaws.com"
+smtp_port        = 587
+
+# Network Configuration
+vpc_cidr               = "10.0.0.0/16"
+availability_zones     = ["eu-west-2a", "eu-west-2b"]
+public_subnet_cidrs    = ["10.0.1.0/24", "10.0.2.0/24"]
+private_subnet_cidrs   = ["10.0.3.0/24", "10.0.4.0/24"]
+
+# Container Configuration
+container_image = "<AWS_ACCOUNT_ID>.dkr.ecr.eu-west-2.amazonaws.com/fider-app:latest"
+container_port  = 3000
+task_cpu        = 512
+task_memory     = 1024
+desired_count   = 2
+ß

@@ -29,8 +29,8 @@ This project deploys Fider (an open-source feedback management tool) on AWS with
 
 **Network:**
 - VPC (10.0.0.0/16) across 2 availability zones
-- 2 Public subnets for ALB and ECS tasks
-- 2 Private subnets for RDS database
+- 2 Public subnets for ALB
+- 2 Private subnets for ECS tasks and RDS database
 - Internet Gateway and NAT Gateway
 
 **Compute:**
@@ -90,6 +90,110 @@ This project deploys Fider (an open-source feedback management tool) on AWS with
 ├── .gitignore
 └── README.md
 ```
+---
+
+## Local Development
+
+### Quick Start
+```bash
+git clone https://github.com/EidAbokor1/ECS-FIDER-APP.git
+cd ECS-FIDER-APP
+
+docker-compose up -d
+```
+
+### Local Services
+- **Fider Application**: http://localhost:80
+- **MailHog (Email Testing)**: http://localhost:8025
+- **PostgreSQL Database**: localhost:5555
+
+### Development Features
+- Hot-reload for code changes
+- Local PostgreSQL with persistent data
+- Email testing with MailHog
+- Debug logging enabled
+
+---
+
+## Database Management
+
+### Schema & Migrations
+- **70+ migration files** in `fider/migrations/`
+- Automatic migration on container startup
+- PostgreSQL 17 with full-text search
+- Multi-language content support
+
+### Migration Commands
+```bash
+docker exec -it fider_container ./fider migrate
+
+docker-compose down -v
+docker-compose up -d
+```
+
+---
+
+## Internationalization
+
+### Supported Languages
+20+ languages including:
+- English, Spanish, French, German
+- Arabic, Chinese, Japanese, Korean
+- Portuguese, Russian, Italian
+- And more in `locale/` directory
+
+### Adding New Languages
+```bash
+npm run locale:extract
+
+cp locale/en/ locale/your-language/
+```
+
+---
+
+## ECR Bootstrap
+
+### Initial ECR Setup
+```bash
+chmod +x bootstrap-ecr.sh
+
+./bootstrap-ecr.sh
+```
+
+This creates the ECR repository required before first Terraform deployment.
+
+---
+
+## Terraform State Management
+
+### S3 Backend Configuration
+- **S3 bucket**: `fider-terraform-state-123456789012`
+- **Native locking**: Enabled with `use_lockfile = true`
+- **Encryption**: Enabled for state files
+- **No DynamoDB**: Uses S3 native locking instead
+
+### State Locking Benefits
+- Prevents concurrent deployments
+- No additional DynamoDB costs
+- Automatic lock cleanup
+- Built into Terraform S3 backend
+
+---
+
+## Testing
+
+### End-to-End Tests
+Located in `e2e/` directory:
+- **Framework**: Playwright/Cucumber
+- **Features**: User scenarios in Gherkin
+- **Setup**: Automated test environment
+
+### Running Tests
+```bash
+cd fider
+npm run test:e2e
+```
+
 ---
 
 ## Prerequisites
@@ -223,18 +327,47 @@ https://github.com/user-attachments/assets/97d04a1f-021b-4d04-95af-66205b11b255
 
 Manage multiple environments with the same code:
 
-```
-Create workspaces
+### Create Workspaces
+```bash
+# Create development workspace
 terraform workspace new dev
+
+# Create production workspace  
 terraform workspace new production
-Deploy to dev
+
+# List all workspaces
+terraform workspace list
+```
+
+### Deploy to Development
+```bash
+# Switch to dev workspace
 terraform workspace select dev
+
+# Apply with dev-specific variables
 terraform apply -var-file="terraform.dev.tfvars"
-Deploy to production
+```
+
+### Deploy to Production
+```bash
+# Switch to production workspace
 terraform workspace select production
+
+# Apply with production-specific variables
 terraform apply -var-file="terraform.prod.tfvars"
 ```
-Each workspace maintains separate state and infrastructure.
+
+### Workspace Benefits
+- **Separate state files**: Each workspace maintains isolated state
+- **Same codebase**: Use identical Terraform code for all environments
+- **Resource isolation**: Resources are prefixed with workspace name
+- **Environment-specific variables**: Different tfvars files per environment
+
+### Important Notes
+- Default workspace uses `var.environment` from tfvars
+- Named workspaces use workspace name as environment identifier
+- Each workspace creates completely separate infrastructure
+- State files stored as `env:/workspace/terraform.tfstate` in S3
 
 ---
 
