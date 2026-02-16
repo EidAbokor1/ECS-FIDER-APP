@@ -54,6 +54,9 @@ if [ "$CURRENT_WORKSPACE" != "$WORKSPACE" ]; then
     exit 1
 fi
 
+echo -e "${YELLOW}Reconfiguring backend for workspace: $WORKSPACE${NC}"
+terraform init -reconfigure > /dev/null
+
 echo -e "${GREEN}Branch and workspace match!${NC}"
 echo ""
 
