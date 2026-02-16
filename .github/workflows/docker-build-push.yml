@@ -53,8 +53,8 @@ jobs:
       
       - name: Update ECS service
         env:
-          ECS_CLUSTER: fider-cluster
-          ECS_SERVICE: fider-service
+          ECS_CLUSTER: fider-prod-cluster
+          ECS_SERVICE: fider-prod-service
         run: |
           aws ecs update-service \
             --cluster $ECS_CLUSTER \
