@@ -9,7 +9,7 @@ AWS_REGION="eu-west-2"
 ECR_REPO_NAME="fider-app"
 IMAGE_NAME="fider"
 
-echo "Getting AWS account ID..."
+echo "Getting AWS account ID"
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 echo "Account ID: $AWS_ACCOUNT_ID"
 
